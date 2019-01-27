@@ -1,0 +1,54 @@
+CREATE USER user WITH PASSWORD 'pass';
+CREATE DATABASE hw1db;
+GRANT ALL PRIVILEGES ON DATABASE hw1db TO user;
+
+CREATE TABLE
+films (
+    film_id SERIAL PRIMARY KEY,
+    name VARCHAR (355) NOT NULL,
+    country VARCHAR (355) NOT NULL,
+    gross MONEY, DECIMAL(9,2) NOT NULL,
+    year VARCHAR (4)
+);
+
+INSERT INTO
+   films
+VALUES
+    (1, 'Dark Knight', 'USA', '$534 858 444', '2008'),
+    (2, 'Forrest Gump', 'USA', '$677 386 686', '1994'),
+    (3, 'Gladiator', 'USA', '$457 640 427', '2000'),
+    (4, 'The Matrix', 'USA', '$463 517 383', '1999'),
+    (5, 'Snatch', 'UK', ' $83 557 872', '2000');
+   
+CREATE TABLE
+persons (
+    person_id SERIAL PRIMARY KEY,
+    name VARCHAR (355) NOT NULL
+);
+
+INSERT INTO
+   persons
+VALUES
+    (11, 'Benicio Del Toro'),
+    (12, 'Keanu Reeves'),
+    (13, 'Ridley Scott'),
+    (14, 'Heath Ledger'),
+    (15, 'Tom Hanks');
+    
+    CREATE TABLE
+persons2content (
+    person_id SERIAL,
+    content_id SERIAL,
+    type VARCHAR (355) NOT NULL
+);
+
+INSERT INTO
+   persons2content
+VALUES
+    (11, 5, 'actor'),
+    (12, 4, 'actor'),
+    (13, 3, 'director'),
+    (14, 1, 'actor'),
+    (15, 2, 'actor');
+    
+    
