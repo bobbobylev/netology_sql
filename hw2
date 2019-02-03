@@ -1,0 +1,56 @@
+SELECT 'ФИО: Бобылев Вячеслав Александрович';
+--  запрос 1.1
+SELECT *
+FROM ratings
+LIMIT 10;
+
+-- запрос 1.2
+SELECT *
+FROM links
+WHERE imdbid LIKE '%42'
+AND movieid BETWEEN 100 AND 1000;
+
+-- запрос 2.1
+SELECT *
+FROM public.links
+INNER JOIN public.ratings
+ON links.movieid=ratings.movieid
+WHERE ratings.rating = '5'
+LIMIT 10;
+
+--запрос 3.1
+SELECT COUNT(*) as no_rating_count
+FROM public.links
+LEFT JOIN public.ratings
+ON links.movieid=ratings.movieid
+WHERE ratings.movieid IS NULL;
+
+--запрос 3.2
+SELECT
+    userId,
+    AVG(rating) as avg_rating
+FROM public.ratings
+GROUP BY userId
+HAVING AVG(rating) > 3.5
+ORDER BY avg_rating DESC
+LIMIT 10;
+
+-- запрос 4.1
+SELECT DISTINCT imdbid FROM public.links
+JOIN public.ratings
+ON links.movieid=ratings.movieid
+WHERE (SELECT AVG(rating) FROM public.ratings)>3.5
+LIMIT 10;
+
+--запрос 4.2
+WITH tmp_table
+AS (
+SELECT
+    userId,
+    COUNT(rating) as activity,
+    rating as r1
+FROM public.ratings
+GROUP BY userId,rating)
+SELECT avg(r1)
+FROM tmp_table
+WHERE activity > 10;
