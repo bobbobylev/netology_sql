@@ -1,0 +1,60 @@
+SELECT userId, movieId,
+(rating-min(rating) OVER (PARTITION BY userId))/(max(rating) OVER (PARTITION BY userId) - min(rating) OVER (PARTITION BY userId)) as normed_rating,
+AVG(rating) OVER (PARTITION BY userId) as avg_rating
+FROM (
+SELECT DISTINCT userId, movieId, rating
+FROM ratings
+WHERE userId <>1
+LIMIT 1000) as sample
+ORDER BY userId
+LIMIT 30;
+
+--КОМАНДА СОЗДАНИЯ ТАБЛИЦЫ
+
+ls /usr/local/share/netology/raw_data | grep keywords
+psql -U postgres -c "
+  CREATE TABLE IF NOT EXISTS keywords (
+    Id serial,
+    tags VARCHAR
+  );"
+
+--КОМАНДА ЗАЛИВКИ ДАННЫХ В ТАБЛИЦу
+psql -U postgres -c "\\copy keywords FROM '/usr/local/share/netology/raw_data/keywords.csv' DELIMITER ',' CSV HEADER";
+
+-- TRANSFORM
+psql -U postgres
+
+WITH top_rated as (
+SELECT movieid,
+AVG(rating) as avg_rating
+FROM ratings
+GROUP BY movieid
+HAVING COUNT(rating) > 50
+ORDER BY avg_rating DESC,
+movieid ASC
+LIMIT 150)
+SELECT keywords.movieId, avg_rating, tags
+FROM keywords
+RIGHT JOIN top_rated
+ON top_rated.movieid=keywords.movieid
+LIMIT 150;
+
+--ЗАПРОС3
+WITH top_rated as (
+SELECT movieid,
+AVG(rating) as avg_rating
+FROM ratings
+GROUP BY movieid
+HAVING COUNT(rating) > 50
+ORDER BY avg_rating DESC,
+movieid ASC
+LIMIT 150)
+SELECT keywords.movieId, avg_rating, tags
+INTO top_rated_tags
+FROM keywords
+RIGHT JOIN top_rated
+ON top_rated.movieid=keywords.movieid
+LIMIT 150;
+
+--КОМАНДА ВЫГРУЗКИ ТАБЛИЦЫ В ФАЙЛ
+\copy (SELECT * FROM ratings LIMIT 150) TO 'ratings_file.csv' WITH CSV HEADER DELIMITER as E'\t';
