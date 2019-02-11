@@ -57,4 +57,4 @@ ON top_rated.movieid=keywords.movieid
 LIMIT 150;
 
 --КОМАНДА ВЫГРУЗКИ ТАБЛИЦЫ В ФАЙЛ
-\copy (SELECT * FROM ratings LIMIT 150) TO 'ratings_file.csv' WITH CSV HEADER DELIMITER as E'\t';
+\copy (SELECT * FROM ratings LIMIT 150) TO 'top_rated_tags_file.csv' WITH CSV HEADER DELIMITER as E'\t';
